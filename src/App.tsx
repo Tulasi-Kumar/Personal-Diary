@@ -30,6 +30,10 @@ const WhatsNextPage = lazy(() =>
   })),
 );
 
+const GuidePage = lazy(() =>
+  import('./features/guide/GuidePage').then((module) => ({ default: module.GuidePage })),
+);
+
 const ReplayPage = lazy(() =>
   import('./features/replay/ReplayPage').then((module) => ({ default: module.ReplayPage })),
 );
@@ -66,6 +70,7 @@ export default function App() {
               <Route path="replay" element={<ReplayPage />} />
               <Route path="day/:date/replay" element={<ReplayPage />} />
               <Route path="profile" element={<ProfilePage />} />
+              <Route path="guide" element={<GuidePage />} />
               <Route path="whats-next" element={<WhatsNextPage />} />
               <Route path="debug" element={<DebugPage />} />
               <Route path="*" element={<NotFoundPage />} />

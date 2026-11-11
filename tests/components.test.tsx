@@ -27,6 +27,7 @@ import { StoryCard } from '../src/features/day/StoryCard';
 import { DayPage } from '../src/features/day/DayPage';
 import { CalendarPage } from '../src/features/calendar/CalendarPage';
 import { WhatsNextPage } from '../src/features/whats-next/WhatsNextPage';
+import { GuidePage } from '../src/features/guide/GuidePage';
 import { ReplayPage } from '../src/features/replay/ReplayPage';
 import { resetDatabaseForTests } from '../src/lib/db/db';
 import {
@@ -135,6 +136,35 @@ describe("what's next", () => {
     await waitFor(async () => expect(await listFeatureVotes()).toHaveLength(0));
 
     vi.unstubAllGlobals();
+  });
+});
+
+describe('guide', () => {
+  it('explains every feature in plain words and links back to the book', async () => {
+    render(
+      <Providers>
+        <GuidePage />
+      </Providers>,
+    );
+
+    expect(screen.getByRole('heading', { level: 1, name: 'How DayBook works.' })).toBeInTheDocument();
+    for (const title of [
+      'Capture in seconds',
+      'The polish',
+      'The day’s story',
+      'Calendar and marked days',
+      'Memories that grow',
+      'Gentle reminders',
+      'Your data and your privacy',
+      'What happens when AI is used',
+    ]) {
+      expect(screen.getByRole('heading', { level: 2, name: title })).toBeInTheDocument();
+    }
+
+    expect(
+      screen.getByText('Two promises about every story: it only says what you wrote (no invented events, names, or feelings), and you can tap the sources of any paragraph to see exactly which pieces it came from.'),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Your book' })).toHaveAttribute('href', '/profile');
   });
 });
 

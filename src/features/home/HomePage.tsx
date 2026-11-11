@@ -78,9 +78,14 @@ export function HomePage() {
             <div className="empty empty--soft">
               <div className="empty__mark" />
               <p className="body muted">A sentence is enough. The page can grow later.</p>
-              <Link to="/profile#demo" className="quiet-link">
-                See a finished diary
-              </Link>
+              <div className="row" style={{ justifyContent: 'center' }}>
+                <Link to="/guide" className="quiet-link">
+                  How it works
+                </Link>
+                <Link to="/profile#demo" className="quiet-link">
+                  See a finished diary
+                </Link>
+              </div>
             </div>
           )}
         </>

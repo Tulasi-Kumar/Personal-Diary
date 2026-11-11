@@ -1641,6 +1641,13 @@ p {
 /* --- What's next --- */
 .next-list { margin-top: var(--space-2); }
 
+/* --- Guide --- */
+.guide-section { padding: var(--space-5) 0; }
+
+.guide-section__text { margin-top: var(--space-3); }
+
+.guide-section__text + .guide-section__text { margin-top: var(--space-2); }
+
 .next-row {
   display: flex;
   align-items: flex-start;

@@ -24,3 +24,14 @@ test('unknown routes stay quiet', async ({ page }) => {
     page.getByRole('heading', { name: 'This page is not in the book.' }),
   ).toBeVisible();
 });
+
+test('the guide opens from the You tab and explains the app', async ({ page }) => {
+  await page.goto('/profile');
+  await page.getByRole('link', { name: 'How DayBook works' }).click();
+  await expect(page.getByRole('heading', { name: 'How DayBook works.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Capture in seconds' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'The day’s story' })).toBeVisible();
+  await expect(page.getByText('no invented events, names, or feelings')).toBeVisible();
+  await page.getByRole('link', { name: 'Your book' }).click();
+  await expect(page.getByRole('heading', { name: 'Your book' })).toBeVisible();
+});

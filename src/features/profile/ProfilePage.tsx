@@ -348,6 +348,13 @@ export function ProfilePage() {
           </div>
           <ChevronRight aria-hidden="true" />
         </Link>
+        <Link to="/guide" className="settings-row settings-row--button">
+          <div>
+            <p className="body">How DayBook works</p>
+            <p className="meta">A short guide to every feature, in plain words.</p>
+          </div>
+          <ChevronRight aria-hidden="true" />
+        </Link>
       </section>
 
       <Sheet
