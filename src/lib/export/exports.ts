@@ -75,6 +75,7 @@ export function buildJsonBackup(data: RawExport): ExportBundle {
         ? {
             heading: story.heading,
             paragraphs: story.paragraphs,
+            form: story.form,
           }
         : undefined,
     };

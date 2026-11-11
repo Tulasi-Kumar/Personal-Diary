@@ -33,6 +33,7 @@ export const AiRequestSchema = z.discriminatedUnion('task', [
     input: z.object({
       date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
       bookName: z.string().min(1).max(80),
+      form: z.enum(['crisp', 'full']).optional(),
       pieces: z.array(pieceForStory).min(1).max(60),
     }),
   }),

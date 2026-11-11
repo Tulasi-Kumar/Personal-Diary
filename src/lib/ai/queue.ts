@@ -1,4 +1,4 @@
-import type { AiJob, AiTask, Piece, RibbonLabel } from '@shared/types';
+import type { AiJob, AiTask, Piece, RibbonLabel, StoryForm } from '@shared/types';
 import { RIBBON_LABELS } from '@shared/ribbon-labels';
 import { PROMPT_VERSION } from '@shared/prompt-version';
 import { db } from '../db/db';
@@ -19,7 +19,7 @@ import {
   upsertRibbon,
   upsertSignals,
 } from '../db/repositories';
-import { dateKey, monthDays, todayKey } from '../db/dates';
+import { dateKey, monthDays, recentPastDayKeys, todayKey } from '../db/dates';
 import { newId } from '../db/ids';
 import { recomputeRibbonRarity } from '../memory/ribbons';
 import { computeDaySignals } from '../memory/signals';
@@ -50,6 +50,7 @@ interface PolishPayload {
 interface StoryPayload {
   date: string;
   bookName: string;
+  form: StoryForm;
   sourceHash: string;
   pieces: Array<{ id: string; text: string; kind: Piece['kind']; createdAt: number }>;
 }
@@ -165,20 +166,31 @@ export async function enqueueStory(
     });
     return;
   }
+  const form: StoryForm = date < todayKey() ? 'full' : 'crisp';
   const sourceHash = storyHash(pieces);
   const day = await getDay(date);
-  if (day?.story && day.storySourceHash === sourceHash) {
+  if (day?.story && day.storySourceHash === sourceHash && day.story.form === form) {
     if (day.storyStatus !== 'ready') await setStoryStatus(date, 'ready');
     return;
   }
   const settings = await ensureSettings();
   await setStoryStatus(date, 'queued');
-  await enqueueJob('story', `story:${date}:${sourceHash}`, {
+  await enqueueJob('story', `story:${form}:${date}:${sourceHash}`, {
     date,
     bookName: settings.bookName || 'My DayBook',
+    form,
     sourceHash,
     pieces: pieces.map(({ id, text, kind, createdAt }) => ({ id, text, kind, createdAt })),
   } satisfies StoryPayload);
+}
+
+export async function wrapUpPastDays(days = 7): Promise<void> {
+  for (const date of recentPastDayKeys(days)) {
+    const pieces = await listPieces(date);
+    if (pieces.length === 0) continue;
+    if (pieces.every((piece) => piece.source === 'demo')) continue;
+    await enqueueStory(date);
+  }
 }
 
 export async function enqueueInsights(date: string): Promise<void> {
@@ -311,7 +323,12 @@ async function runJob(job: AiJob): Promise<unknown> {
       }
       const result = await callAi({
         task: 'story',
-        input: { date: payload.date, bookName: payload.bookName, pieces: payload.pieces },
+        input: {
+          date: payload.date,
+          bookName: payload.bookName,
+          form: payload.form,
+          pieces: payload.pieces,
+        },
       });
       if (result.task !== 'story') throw new Error('Unexpected story result.');
       const currentPieces = snapshotForAi(await listPieces(payload.date));
@@ -332,6 +349,7 @@ async function runJob(job: AiJob): Promise<unknown> {
         {
           heading: result.heading,
           paragraphs: result.paragraphs,
+          form: payload.form,
           generatedAt: Date.now(),
         },
         payload.sourceHash,

@@ -79,4 +79,62 @@ describe.skipIf(!ENABLED)('live AI smoke (real Gemini, uses free-tier quota)', (
       for (const id of cited) expect(['piece-a', 'piece-b']).toContain(id);
     },
   );
+
+  it(
+    'writes the full end-of-day page for a finished day',
+    { timeout: 150_000 },
+    async () => {
+      const pieces = [
+        {
+          id: 'piece-a',
+          text: 'woke before the alarm again, third time this week. made strong coffee and sat by the window while the street was still dark. the neighbour was already pruning roses, she always is, no matter the cold. we waved. i did not go out to talk.',
+          kind: 'text' as const,
+          createdAt: Date.parse('2026-11-11T06:30:00Z'),
+        },
+        {
+          id: 'piece-b',
+          text: 'long walk at noon, nearly an hour. took the path behind the old mill because the main road was loud with lunch traffic. the river was high from the rain on monday. saw two geese on the water near the second bend and stayed a while watching them not move. my boots are not waterproof. noted for next time.',
+          kind: 'text' as const,
+          createdAt: Date.parse('2026-11-11T12:15:00Z'),
+        },
+        {
+          id: 'piece-c',
+          text: 'afternoon at the desk. wrote three letters, only sent one. the ink ran low near the end of the second page and the last paragraph looks thin. answered the electricity bill. put the lighthouse book back on the shelf and took it down again.',
+          kind: 'text' as const,
+          createdAt: Date.parse('2026-11-11T16:00:00Z'),
+        },
+        {
+          id: 'piece-d',
+          text: 'meera called while i was cooking. we talked about her sister moving to pune and whether the train is better than the flight. i burnt the onions a little. dinner was still good. the kitchen smelled like burnt onions and cumin until nine.',
+          kind: 'text' as const,
+          createdAt: Date.parse('2026-11-11T19:40:00Z'),
+        },
+        {
+          id: 'piece-e',
+          text: 'evening. finished the book about lighthouses, the one meera lent me in september. the last chapter was about a keeper who stayed forty years on the same rock. felt quiet after, the good kind. called home for ten minutes. mother said the mango tree flowered early this year.',
+          kind: 'text' as const,
+          createdAt: Date.parse('2026-11-11T21:00:00Z'),
+        },
+      ];
+      const result = await handleAiRequest(
+        {
+          task: 'story',
+          input: { date: '2026-11-11', bookName: 'DayBook', form: 'full', pieces },
+        },
+        env,
+        'live-smoke',
+      );
+      expect(result.status).toBe(200);
+      const story = result.body as {
+        heading: string;
+        paragraphs: Array<{ text: string; sourcePieceIds: string[] }>;
+      };
+      expect(story.heading).toBeTruthy();
+      const text = story.paragraphs.map((p) => p.text).join(' ');
+      const wordCount = text.split(/\s+/).filter(Boolean).length;
+      expect(wordCount).toBeGreaterThan(200);
+      const cited = new Set(story.paragraphs.flatMap((p) => p.sourcePieceIds));
+      for (const id of cited) expect(['piece-a', 'piece-b', 'piece-c', 'piece-d', 'piece-e']).toContain(id);
+    },
+  );
 });

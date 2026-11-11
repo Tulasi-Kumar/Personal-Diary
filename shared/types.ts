@@ -12,6 +12,8 @@ export type WritingStyle = 'polished';
 
 export type AiTask = 'polish' | 'story' | 'insights' | 'recap' | 'vision';
 
+export type StoryForm = 'crisp' | 'full';
+
 export type AiJobStatus = 'queued' | 'running' | 'done' | 'error';
 
 export interface StoryParagraph {
@@ -22,6 +24,7 @@ export interface StoryParagraph {
 export interface Story {
   heading: string;
   paragraphs: StoryParagraph[];
+  form?: StoryForm;
   generatedAt: number;
 }
 

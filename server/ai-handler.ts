@@ -76,8 +76,11 @@ function parseJson(text: string): unknown {
   }
 }
 
-function maxOutputTokens(task: AiRequest['task']): number {
-  return task === 'story' || task === 'recap' ? 8192 : 4096;
+function maxOutputTokens(request: AiRequest): number {
+  if (request.task === 'story') {
+    return request.input.form === 'full' ? 8192 : 2048;
+  }
+  return request.task === 'recap' ? 8192 : 4096;
 }
 
 function modelCandidates(env: Record<string, string | undefined>): string[] {
@@ -186,7 +189,7 @@ export async function handleAiRequest(
     generationConfig: {
       temperature: request.task === 'polish' ? 0.35 : 0.3,
       topP: 0.9,
-      maxOutputTokens: maxOutputTokens(request.task),
+      maxOutputTokens: maxOutputTokens(request),
       responseMimeType: 'application/json',
       responseSchema: jsonShapeFor(request),
     },

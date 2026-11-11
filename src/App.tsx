@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AppShell } from './components/AppShell';
 import { ScrollToTop } from './components/ScrollToTop';
 import { ToastProvider } from './components/Toast';
-import { startAiQueue } from './lib/ai/queue';
+import { startAiQueue, wrapUpPastDays } from './lib/ai/queue';
 import { HomePage } from './features/home/HomePage';
 import { NotFoundPage } from './features/not-found/NotFoundPage';
 
@@ -48,6 +48,7 @@ function RouteFallback() {
 export default function App() {
   useEffect(() => {
     startAiQueue();
+    void wrapUpPastDays();
   }, []);
 
   return (

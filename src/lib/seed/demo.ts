@@ -871,6 +871,7 @@ export async function loadDemoDiary(): Promise<{ days: number; pieces: number }>
               .map((index) => pieces[index]?.id)
               .filter((id): id is string => Boolean(id)),
           })),
+          form: 'full' as const,
           generatedAt: now,
         };
         const day: Day = {

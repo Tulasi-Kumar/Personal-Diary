@@ -45,7 +45,7 @@ This keeps each phase reviewable and prevents a large unreviewed change set.
 
 ## Status tracker
 
-Last verified: 2026-11-11. `npm run test` (47/47 + live smoke skipped), `npm run test:e2e` (Chromium 9/9, Firefox 8/8 + 1 PWA skip), `npm run typecheck`, and `npm run build` all pass. Live AI smoke (`LIVE_AI_SMOKE=1 npx vitest run tests/live-ai-smoke.test.ts`) exercises real polish and story calls against Gemini and passes. Deployed to production at https://daybook-livid-eight.vercel.app; polish, story, and the 405 method guard verified against the live deployment.
+Last verified: 2026-11-11. `npm run test` (51/51 + live smoke skipped), `npm run test:e2e` (Chromium 9/9, Firefox 8/8 + 1 PWA skip), `npm run typecheck`, and `npm run build` all pass. Live AI smoke (`LIVE_AI_SMOKE=1 npx vitest run tests/live-ai-smoke.test.ts`) exercises real polish and story calls against Gemini and passes. Deployed to production at https://daybook-livid-eight.vercel.app; polish, story, and the 405 method guard verified against the live deployment. Two-form story shipped: crisp (~100 words) while the day is live, full (~1000–1500 words) once the day is over (prompt version 3).
 
 | Phase | Status | Gate passed | Notes |
 |---|---|---|---|

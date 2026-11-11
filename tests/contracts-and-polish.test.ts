@@ -47,6 +47,26 @@ describe('AI contracts', () => {
     expect(prompt.user).toContain('id=piece-2');
   });
 
+  it('scales the page by form: crisp while the day is live, full once it is over', () => {
+    const base = {
+      date: '2026-01-01',
+      bookName: 'My DayBook',
+      pieces: [
+        { id: 'piece-1', text: 'It rained.', kind: 'text' as const, createdAt: 1 },
+        { id: 'piece-2', text: 'I stayed in and read.', kind: 'text' as const, createdAt: 2 },
+      ],
+    };
+    const crisp = promptFor({ task: 'story', input: base });
+    const full = promptFor({ task: 'story', input: { ...base, form: 'full' } });
+
+    expect(crisp.system).toContain('short, crisp');
+    expect(crisp.system).toContain('around 100 words');
+    expect(crisp.user).toContain('short, crisp page of the day so far');
+    expect(full.system).toContain('1000 to 1500 words');
+    expect(full.system).toContain('Scale honestly to the available input');
+    expect(full.user).toContain('complete page of the finished day');
+  });
+
   it('restricts story source ids to the supplied pieces', () => {
     const shape = jsonShapeFor({
       task: 'story',

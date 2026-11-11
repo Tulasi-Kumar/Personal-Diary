@@ -410,6 +410,8 @@ sequenceDiagram
 - Any new piece on a past day triggers the same flow.
 - If the new `storyHash` equals `Day.storyHash`, skip the call.
 - Keep the previous story until a new valid one is stored, so the page never goes blank.
+- Two forms: today's page is `crisp` (about 100 words); a past day's page is `full` (about 1000–1500 words, scaled to the material). The form is part of the story job's dedupe key, so a finished day gets one regeneration from crisp to full.
+- End-of-day wrap-up: on app open, the last seven days that have real writing and no full page are re-enqueued (demo-only days are skipped); visiting a past day without a full page also triggers it.
 
 ### 8.6 Insights and ribbons
 
@@ -649,7 +651,7 @@ Every prompt encodes the same rules from the spec:
 2. Do not add facts, feelings, people, places, or events.
 3. Preserve names, numbers, places, and order.
 4. Polish may reword and condense; it may not change meaning or tone intensity.
-5. Story is first person and about one page. The model reads the complete day first, identifies its dominant emotional tone, and writes one continuous narrative in that tone: no sentence-per-piece collage, no invented chronology, and no brightening or flattening the day. A short day gets one or two sentences.
+5. Story is first person and comes in two forms: while the day is live it is a short, crisp page (around 100 words, scaled honestly to the material); once the day is over it is regenerated as the full page of the finished day (around 1000–1500 words when the material supports it, never padded). The model reads the complete day first, identifies its dominant emotional tone, and writes one continuous narrative in that tone: no sentence-per-piece collage, no invented chronology, and no brightening or flattening the day. A thin day gets a shorter, truthful page either way.
 6. Heading is under eight words and names the day's real content and emotional centre.
 7. Every story sentence cites at least one piece id.
 8. Insights use open-ended labels and exact quotes.

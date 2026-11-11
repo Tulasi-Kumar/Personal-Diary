@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Check, Pencil } from 'lucide-react';
 import type { Piece, Story } from '@shared/types';
 import {
   formatLongDate,
+  isPast,
   isToday,
   parseDateKey,
   todayKey,
@@ -49,6 +50,20 @@ function DayReader({ date }: { date: string }) {
     }, 4000);
     return () => window.clearTimeout(timer);
   }, [date, day?.storyStatus, day?.story]);
+
+  const wrapTriggered = useRef(false);
+  useEffect(() => {
+    if (wrapTriggered.current) return;
+    if (!isPast(date) || pieces.length === 0) return;
+    if (day?.story?.form === 'full') {
+      wrapTriggered.current = true;
+      return;
+    }
+    const status = day?.storyStatus;
+    if (status === 'queued' || status === 'generating' || status === 'error') return;
+    wrapTriggered.current = true;
+    void enqueueStory(date);
+  }, [date, pieces.length, day?.story?.form, day?.storyStatus]);
 
   async function saveHeading() {
     await setDayHeading(date, headingDraft);
@@ -177,7 +192,9 @@ function StoryReader({
       <div className="story-card story-card--quiet" aria-live="polite">
         <p className="quiet-line">
           <span className="spinner" aria-hidden="true" />
-          Gathering the day into a page.
+          {isPast(date) && day.story?.form !== 'full'
+            ? 'Wrapping up the day into its full page.'
+            : 'Gathering the day into a page.'}
         </p>
       </div>
     );

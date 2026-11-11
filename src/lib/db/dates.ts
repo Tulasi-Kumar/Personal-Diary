@@ -40,6 +40,14 @@ export function isPast(key: string): boolean {
   return key < todayKey();
 }
 
+export function recentPastDayKeys(count: number): string[] {
+  const result: string[] = [];
+  for (let i = 1; i <= count; i += 1) {
+    result.push(dateKey(subDays(new Date(), i)));
+  }
+  return result;
+}
+
 export function formatLongDate(key: string): string {
   return format(parseDateKey(key), 'EEEE, d MMMM yyyy');
 }
