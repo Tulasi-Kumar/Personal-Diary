@@ -1,0 +1,21 @@
+The problem. Many people want to keep a diary, but by the time they sit down at night, they can’t remember what happened during the day. They write a few thin lines, feel it isn’t worth it, and quit. When they remember something the next day, they can’t add it back.
+
+Your solution. You don’t wait until night. Whenever something happens, you open the app and write or speak it into today’s page, in as many pieces as you like. You can also add photos and videos. You never fill in tags, moods, or forms. You just write the way you’d talk.
+
+What the app does for you quietly:
+
+It fixes your grammar and polishes your wording into good English, without changing what you meant. Your original words are kept hidden, so you can always undo a correction.
+It turns the whole day into a short heading and a one-page story in your own voice. When you open a day, you see that story first. Tap any sentence to see exactly which part of your writing it came from, or tap through to read everything you wrote.
+It never invents facts. Every sentence in the story traces back to something you actually wrote.
+
+Looking back. The Memories tab is where the app’s insights live, and they stay off your writing and reading pages so those stay clean. It shows a page from a year ago, a weekly recap, a monthly review, and special days it spotted from your writing, such as your happiest day, your most travelled day, or your most fun day. Each one shows quotes from your own words as proof. These also trigger notifications like “one year ago today”, and you can replay any day as a short slideshow of your photos and story lines.
+
+Past days. If you remember something from yesterday, you open that day from the Calendar and add to it. It’s marked “added later.” This fixes the original pain point you described.
+
+What it looks like. Four tabs: Home (today’s blank page), Calendar, Memories, and Profile. The design is calm, premium, and book-like, with ivory paper, serif text, and almost nothing else on screen.
+
+Who it’s for. People who tried a diary, couldn’t recall their day when they sat down to write, saw their entries thin out, and quit.
+
+The one-line bet. If people can capture a moment when it happens, and the app builds the page for them, they will keep a diary longer. This is still a hypothesis, because we skipped user research.
+
+What’s real in the project. It’s a free, installable web app. Everything is stored on your device, the AI runs on a free tier, and a “Load demo diary” button fills it with sample days so Memories works on day one. A What’s Next screen lists the features you’ve decided to leave for later, such as semantic search, generative video, location-based badges, real push notifications, and privacy features.

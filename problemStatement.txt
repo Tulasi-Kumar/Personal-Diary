@@ -1,0 +1,255 @@
+1. The product in brief
+Problem. People who want to keep a diary can't recall the day's moments by night. Entries end up thin, the habit feels pointless, and they quit.
+Hypothesis (unvalidated). People remember things at the moment they happen. If they can add to their day's page in pieces, and the app turns long, messy writing into a polished page and a short story, they will keep a diary longer.
+Primary user. People who tried a diary, forgot the day's details when they sat down to write, saw entries thin out, and quit.
+One line. A clean personal daily diary: write or speak whenever something happens, and each day becomes a polished page with a heading and a one-page story.
+Nature of this project. A learning and portfolio project. No launch, no real users. Privacy and security are out of scope by choice, but this is listed on the What's Next screen.
+2. Design principles
+1. A diary, not a dashboard. No stats, streaks, mood pickers, tag chips, or metric cards on the writing and reading screens.
+2. Premium and calm. Ivory paper, ink serif text, one bronze accent, generous whitespace, hairline dividers, almost no shadows.
+3. Never ask the user to fill in fields. The user writes or speaks. The AI does the rest.
+4. The raw words are the source of truth. Everything the AI produces points back to what the user wrote.
+5. Insights live in Memories only. Moods, ribbons, throwbacks, and recaps never appear on Home or on a day page.
+6. The AI never invents facts. Polishing and summarizing may reword and condense. They may not add.
+7. If in doubt, remove an element.
+3. User journey (locked)
+1. Open the app. Today's blank page appears with the date at the top and the capture options (type, speak, photo, video). Bottom nav: Home, Calendar, Memories, Profile.
+2. Write in pieces through the day. Each piece you add is saved, then polished automatically (grammar fixed, wording improved, meaning unchanged).
+3. The day's story forms quietly. After each piece, the app updates that day's heading and one-page story. There is no review or confirm step.
+4. Read a day. From the Calendar, open a day to see the heading and the one-page story first. Tap a sentence to see the passage it came from. Tap Read everything I wrote for the full polished writing.
+5. Add to any past day. From the Calendar, open a day and add to it. The piece is marked added later.
+6. Memories. Throwbacks, weekly and monthly recaps, and marked days (Happiest day, Most travelled, and so on) live here. These also drive in-app notifications such as One year ago today.
+7. Replay. Any day can be played as a short recap reel made from its photos and story.
+8. Profile. The book's name, an optional evening reminder, notification toggles, export, a Load demo diary button, and a What's Next screen.
+4. Scope of v1
+Area
+v1 behavior
+Real or demo
+Text capture
+Type into today's page, add in pieces
+Real
+Voice capture
+Browser speech recognition, live transcript into the page
+Real (Chrome and Android best, Safari limited)
+Photo and video attach
+Add to a day, stored on the device, shown inline
+Real
+Polish
+Each piece is corrected grammatically and improved, meaning unchanged
+Real (free-tier LLM)
+Day heading and story
+One short heading and a one-page first-person story, sentence-to-source links
+Real (free-tier LLM)
+Raw layer
+Original words kept hidden as the source of truth, used for undo
+Real
+Calendar
+Month grid, dot on days with entries, open any day, add to past days
+Real
+Memories
+One year ago, this week, monthly recap, marked days with evidence quotes
+Real (LLM over saved days)
+Notifications
+In-app banners for throwbacks, ribbons, and the optional evening reminder
+Real in-app. True push is on What's Next
+Replay
+Slideshow of the day's photos with story lines as captions, optional music toggle
+Real (simple slideshow)
+Demo diary
+A button that loads about 45 days of realistic entries so Memories works on day one
+Real, clearly labeled
+What's Next
+A screen listing upcoming features, with a local I want this tap
+Real
+Out of v1, and listed on What's Next: semantic search, generative video, GPS-based Most Travelled, true push notifications, privacy and encryption, cloud sync and login, video understanding, multi-language, widgets, pinned passages, and real user research.
+5. Screens
+Stitch screens are a reference only. Cursor may select from them, borrow parts, or design its own screens, whichever best suits the app. The rules below always win over the reference.
+Navigation: four tabs, Home, Calendar, Memories, Profile, with thin line icons.
+1. Home (today's page). Date at the top. A blank writing page with a soft cursor and the placeholder What happened today? A slim capture bar at the bottom with type, speak, photo, video, and an Add button. Earlier pieces from today appear as quiet collapsed entries with timestamps above the new text.
+2. Speaking. The page is dimmed, with a minimal sheet showing a waveform, a timer, and live words flowing into the page. Done and Discard.
+3. Calendar. A month grid. Days with entries get a tiny bronze dot. Today is gently circled. Tapping a day opens it.
+4. Day (story). The date, a short heading, and a one-page story in first person with a drop cap and an optional inline photo. Links at the bottom: Read everything I wrote and Add to this day. Tapping a sentence opens a soft panel with the source passage.
+5. Everything I wrote. The polished pieces in order, with hairline dividers and timestamps, voice mark on dictated pieces, media inline, and an added later label where it applies. A Back to the story link.
+6. Add to a past day. The same writing page as Home with that day's date and a small label, Adding to a past day.
+7. Memories. Three sections: One year ago today (or the closest past day), This week (a short recap with quoted lines linking to days), and Marked days (a horizontal row of day cards with a small bronze label).
+8. Marked day detail. A sheet with the ribbon name, two or three quoted lines from that day as evidence, and links: Read the day, Replay this day.
+9. Monthly recap. A two-paragraph reflection with Pages worth returning to. No numbers or charts.
+10. Replay. A full-screen slow slideshow with captions in white serif over a soft fade, a progress line, a close button, and a music toggle.
+11. Profile. The book's name, evening reminder time, memory notifications toggle, writing style (Polished), Export my diary, Load demo diary, Clear all data, About, and What's Next.
+12. What's Next. See section 10.
+States to design: empty today, empty Calendar, story updating (a quiet line under the story, no spinner or modal), AI unavailable (show the polished or raw text and a quiet retry), no photos for Replay (text-only slides), and demo data loaded (a small unobtrusive label).
+6. AI behavior specification
+All AI calls go through one server route so the API key never ships to the browser. Every AI response is JSON, validated against a schema. Invalid responses are retried once, then fall back gracefully.
+6.1 Polish (per piece)
+• Input: the raw piece text and its timestamp.
+• Task: fix spelling, grammar, and punctuation, improve clarity and phrasing into good, natural English, and keep the person's first-person voice.
+• Hard rules: keep the meaning, names, numbers, places, and order. Do not add facts, feelings, or details. Do not make it more dramatic. Keep roughly the same length (it may shorten repetition).
+• Storage: the raw text is saved unchanged in a hidden raw field. The polished text is shown. The user can tap Undo polish on any piece to revert to the raw text.
+6.2 Day story (per day, updated after each new piece)
+• Input: all of that day's polished pieces with IDs, in order, plus media descriptions if any.
+• Output: { heading, story: [{ text, source_piece_ids }] }.
+• Task: a short, warm, first-person story of about one page (3 to 4 short paragraphs for a long day, fewer for a short day). The heading is under 8 words and describes the day's real content.
+• Hard rules: only use what the pieces say. Every sentence must cite at least one valid piece ID. Never invent facts, feelings, or events. A day with one short note gets one or two sentences, not padding.
+• Validation: drop or regenerate any sentence with no valid source. If more than a third fail, keep the previous story and retry later.
+• Triggers: debounced 8 seconds after the last added piece, and again when a past day gets a new piece.
+6.3 Insights (per day, background)
+• Input: the day's polished pieces.
+• Output: { moods: [{ label, evidence_quotes }], ribbons: [{ label, strength, evidence_quotes }], places: [...], people: [...] }.
+• Rules: labels are open-ended (Happiest day, Lots of fun, Met friends, Felt nostalgic, Most travelled, Craziest day, Hard day, Proud moment, and any others that fit). Evidence quotes must be exact substrings of the user's writing. Places and people come only from the text.
+• Rarity: a ribbon is awarded only when the day stands out against the others. Recompute across days, and cap at about one ribbon per 7 days per label.
+• Where it shows: Memories and its sheets only.
+6.4 Recaps
+• Weekly: the week's day stories in, a short two-paragraph letter-style recap out, with two or three quoted highlights linking to their days. Generated on demand, then cached.
+• Monthly: the same, with Pages worth returning to (4 days with one quoted line each).
+• Throwbacks: no AI needed. Pick the day from one year ago (or the nearest earlier memorable day) and show its heading and story excerpt.
+6.5 Photos
+If an image is attached without caption text, ask the vision model for one factual sentence about what is visible. It never guesses who or why. This sentence is stored as the media description.
+6.6 Cost and limits
+The free tier has rate limits, so queue calls, debounce them, cache results by content hash, and never block the UI. If a call fails, the app still works with the raw and polished text.
+7. Data model (IndexedDB via Dexie)
+Piece { id, dayId, type: 'text'|'voice'|'photo'|'video', rawText, polishedText, createdAt, addedLater: boolean, mediaId?, mediaDescription? }
+Media { id, blob, mimeType, thumbnailBlob? }
+Day { id: 'YYYY-MM-DD', heading, story: [{ text, sourcePieceIds[] }], storyUpdatedAt, storyHash, moods[], ribbons[], places[], people[] }
+Recap { id: 'week:YYYY-Www' | 'month:YYYY-MM', text, highlights[{ quote, dayId }], createdAt }
+Settings { bookName, reminderTime?, memoryNotifications: boolean }
+FeatureVote { featureId, voted: boolean }
+8. Tech stack (all free)
+Need
+Choice
+Why
+App
+Vite or Next.js, React, TypeScript
+Fast, free, well supported by Cursor
+Styling
+Tailwind CSS
+Quick to get a refined, consistent look
+PWA
+vite-plugin-pwa or next-pwa
+Installable from the browser, works offline
+Local storage
+Dexie (IndexedDB)
+Stores text and blobs, no backend needed
+AI
+Gemini API free tier
+Free, supports JSON output and vision
+Server route
+A Vercel or Netlify serverless function
+Keeps the API key off the client, free tier is enough
+Speech to text
+Web Speech API
+Free, in-browser
+Hosting
+Vercel or Netlify free tier
+Free HTTPS, which the PWA needs
+Fonts
+Google Fonts (Lora or Crimson Pro, Inter)
+Free
+Icons
+lucide-react
+Thin line icons, free
+The AI provider sits behind one small interface, so it can be swapped.
+9. Build order for Cursor
+1. Setup. Project, Tailwind, design tokens, fonts, PWA manifest, bottom nav with four routes.
+2. Local data layer. Dexie schema, day and piece helpers, today's date handling.
+3. Home. Blank page, capture bar, add text pieces, collapsed earlier pieces.
+4. Server route and polish. Gemini route with JSON schema validation, polish after each piece, raw field, Undo polish.
+5. Day story. Heading and sentence-to-source story with validation, debounced updates, the Day screen, source panel, and Everything I wrote.
+6. Calendar. Month grid, dots, open any day, add to a past day with the added later label.
+7. Voice. Web Speech API with fallback message where unsupported.
+8. Photos and videos. Attach, store as blobs, inline in pages, media descriptions.
+9. Demo diary. Seed about 45 days of realistic, varied entries, including days that should earn ribbons and one year-old entries for the throwback.
+10. Insights and Memories. Per-day insights, ribbons with rarity rules, One year ago, weekly and monthly recaps, marked days and evidence sheet.
+11. Notifications. In-app banners for throwbacks and ribbons, and an optional evening reminder shown when the app is open.
+12. Replay. Slideshow from photos and story lines, text-only fallback.
+13. Profile. Settings, export (a single readable text or JSON file), clear data, Load demo diary.
+14. What's Next screen. See section 10.
+15. Polish and QA. Empty states, error states, accessibility, and a pass against the acceptance criteria below.
+Ask Cursor to finish and verify one step at a time.
+10. The What's Next screen
+Where it lives. Profile has a What's Next row that opens this screen.
+Look and feel. The same quiet book style: a title, one line of intro (Things we are thinking about next), and a vertical list of rows separated by hairlines. No cards and no icons beyond a small bronze status word.
+Each row has: a feature name, one line on why it matters to the user, a status word (Planned, Exploring, or Needs research), and a quiet I want this tap that saves locally and shows a small count on the device. This is also a way to practice reading demand signals.
+The list:
+Feature
+Why it matters
+Status
+Semantic search
+Find a memory by meaning, such as the day I felt proud at work
+Planned
+Generative video recap
+A cinematic video of a day made from your writing and media
+Exploring
+Most Travelled with location
+Automatic travel badges from places and photo locations
+Planned
+Real push notifications
+Throwbacks and reminders even when the app is closed
+Planned
+Privacy and encryption
+End-to-end encryption, app lock, and local-first controls
+Planned
+Cloud sync and login
+Keep your diary across devices and never lose it
+Planned
+Video understanding
+Summaries that use what is said and shown in videos
+Exploring
+Voice notes with audio kept
+Keep the original voice and play it back in your story
+Exploring
+Pin a passage
+Make sure a special line always appears in the story
+Planned
+Multi-language writing
+Write in your language, with polishing in that language
+Exploring
+Home screen widget
+One-tap capture from the home screen
+Exploring
+Choose your writing style
+Polished, Natural, or Poetic options for the polish step
+Exploring
+Real user research
+Validate the problem with people who quit diaries
+Needs research
+11. Acceptance criteria
+• Opening the app shows today's blank page and the capture options within one second.
+• A text piece can be added in under 5 seconds from opening the app.
+• After a piece is added, polish appears within a few seconds, and Undo polish restores the raw words exactly.
+• The polished text keeps names, numbers, places, and meaning. On 10 test pieces, none gains a fact that the raw text lacked.
+• Every sentence of a day story opens a source passage. On 10 test days, none contains a fact absent from the pieces.
+• A day with one short note produces a one or two sentence story, not padding.
+• The Calendar shows a dot for each day with entries, and any past day can be added to, marked added later.
+• Memories appears only after enough data exists, or instantly after Load demo diary.
+• No insight, mood, or ribbon appears on Home, Calendar, or Day screens.
+• Every ribbon shows exact quotes from the user's own writing.
+• With the network off, the user can still write and read. AI features show a quiet unavailable state.
+• The What's Next screen lists the features above, and I want this persists on the device.
+• The app installs as a PWA, and its production build costs nothing to run on free tiers.
+12. Measurement (kept for the portfolio story)
+• North star: days per week with a saved diary page, per user.
+• Capture: median time from opening the app to a saved piece, and pieces per active day.
+• AI quality: the rate of Undo polish taps, and the rate of dismissed or incorrect ribbons.
+• Implementation: a hidden, local-only debug page at /debug may show these numbers from the demo and the developer's own use. It is not part of the user app.
+13. Risks
+Risk
+Level
+Mitigation
+Polish changes meaning
+High
+Strict rules, raw field, Undo polish, test set
+Story flattens what mattered
+Medium
+Source links, full polished text one tap away, Pin a passage on What's Next
+Free-tier rate limits
+Medium
+Debounce, queue, cache, graceful fallback
+Speech recognition support varies
+Medium
+Clear fallback to typing, listed as a known limit
+Cold start for Memories
+Medium
+Load demo diary
+Nothing validated with real users
+High (known)
+Stated as a hypothesis, listed on What's Next

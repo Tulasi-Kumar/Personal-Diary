@@ -1,0 +1,37 @@
+:root {
+  --paper: #faf6ee;
+  --paper-raised: #fdf9f1;
+  --paper-sheet: #f4efe4;
+  --paper-deep: #f1ede6;
+  --ink: #241f1b;
+  --ink-soft: #6e645d;
+  --ink-muted: #8c8075;
+  --ink-faint: #b3a89c;
+  --bronze: #9a6b3f;
+  --bronze-deep: #7e5329;
+  --bronze-wash: #f0e2d0;
+  --hairline: #e8dfd1;
+  --hairline-soft: #ede5d8;
+  --danger: #9c3d32;
+  --danger-wash: #f6e3df;
+  --success: #4f6a4a;
+  --scrim: rgba(36, 31, 27, 0.16);
+  --shadow-paper: 0 1px 0 rgba(36, 31, 27, 0.03);
+  --font-serif: 'EB Garamond', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --radius-sm: 2px;
+  --radius: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --measure: 680px;
+  --nav-height: 64px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
